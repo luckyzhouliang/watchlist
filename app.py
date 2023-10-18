@@ -34,10 +34,10 @@ class Movie(db.Model):  # 表名将会是 movie
 
 
 @app.route('/')
-def hello():
+def index():
     user = User.query.first()
     movies = Movie.query.all()
-    return render_template('index.html', name=user.name, movies=movies)
+    return render_template('index.html', movies=movies)
 
 
 @app.cli.command()
@@ -68,3 +68,14 @@ def forge():
 
     db.session.commit()
     click.echo('Done.')
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    user = User.query.first()
+    return render_template('404.html'), 404  # 返回模板和状态码
+
+@app.context_processor
+def inject_user():
+    user = User.query.first()
+    return dict(user=user)
